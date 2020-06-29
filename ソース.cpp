@@ -13,9 +13,9 @@ using namespace std;
 #define IPFILE "IP.log"
 #define MAXPATH 1024
 
-int GetInternetIP();//��ȡIP
-int SaveIp();//����ȡ��IPд��IP.txt
-int PutsTime();//
+int GetInternetIP();//获取IP/現在IPを獲得する
+int SaveIp();//将获取的IP写入IP.txt/獲得したIPをIP.txtに書き込む
+int PutsIP_Time();//写入IP和时间/IPと現在時刻を書き込む
 
 char IP[15] = { 0 };
 char str[MAXPATH];
@@ -25,6 +25,8 @@ FILE* fp = NULL;
 int main()
 {
 	GetInternetIP();
+	
+	//如果与之前IP相同则不写入/前のIPと同じ場合は何も書き込まない
 	if (SaveIp() == 0)
 	{		
 		goto close;
@@ -40,7 +42,8 @@ int GetInternetIP()
 	URLDownloadToFile(0, TEXT(IPnet), TEXT(FILENAME), 0, NULL);
 
 	in.open(FILENAME);
-
+	
+	//提取IP/IPを絞り出す
 	for (int i = 0; i < 37; i++)
 	{
 		in.getline(str, MAXPATH);
@@ -60,6 +63,7 @@ int SaveIp()
 	int rt = 0;
 	fstream fin(IPFILE, ios::ate | ios::in);
 
+	//核对之前的IP/前のIPと照合
 	fin.seekg(-3, fin.cur);
 
 	int state = 0;
@@ -91,7 +95,7 @@ int SaveIp()
 	fin.close();
 	return rt;
 }
-int PutsTime()//���ʱ��
+int PutsTime()
 {
 	errno_t err;
 	err = fopen_s(&fp, IPFILE, "a");
